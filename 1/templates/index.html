@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroGrid Interface</title>
+    <style>
+        
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    textarea { width: 100%; height: 100px; margin-bottom: 10px; }
+    select, button { margin: 5px 0; }
+    #codeArea { display: none; margin-top: 20px; background-color: #f4f4f4; padding: 10px; border-radius: 5px; }
+    #imageResults { display: none; margin-top: 20px; }
+    #imageContainer img { width: 300px; border: 1px solid #ccc; border-radius: 8px; margin: 5px; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            color: #2d3748;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #2b6cb0;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+
+        textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus, select:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 1px #4299e1;
+        }
+
+        button {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s ease;
+            text-transform: uppercase;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            background: #3182ce;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #e2e8f0;
+            margin: 15px 0;
+            border-radius: 2px;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #4299e1;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .artifact {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .cyber-image {
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .cyber-image:hover {
+            transform: translateY(-2px);
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 8px;
+        }
+  </style>
+</head>
+<body>
+  <h2>Chatbot Interface</h2>
+  <form id="chatForm" onsubmit="sendMessage(event)">
+    <label for="text_model">Select Text Model:</label>
+    <select id="text_model">
+      {% for model in text_models %}
+        <option value="{{ model }}">{{ model }}</option>
+      {% endfor %}
+    </select>
+    <br />
+    <label for="image_model">Select Image Model:</label>
+    <select id="image_model">
+      {% for model in image_models %}
+        <option value="{{ model }}">{{ model }}</option>
+      {% endfor %}
+    </select>
+    <br />
+    <label for="thinking_model">Select Thinking Model:</label>
+    <select id="thinking_model">
+      {% for model in thinking_models %}
+        <option value="{{ model }}">{{ model }}</option>
+      {% endfor %}
+    </select>
+    <br />
+    <label for="streamToggle">
+      <input type="checkbox" id="streamToggle" /> Stream Response
+    </label>
+    <br />
+    <textarea id="userInput" placeholder="Enter your prompt here..."></textarea>
+    <button type="submit">Send</button>
+  </form>
+
+  <h3>Response:</h3>
+  <pre id="responseArea">Results will appear here...</pre>
+
+  <div id="codeArea">
+    <h3>Code Output:</h3>
+    <pre id="codeOutput"></pre>
+  </div>
+
+  <div id="imageResults">
+    <h3>Generated Images:</h3>
+    <div id="imageContainer" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+  </div>
+
+  <script>
+    function sendMessage(event) {
+      event.preventDefault();
+      const prompt = document.getElementById("userInput").value;
+      const textModel = document.getElementById("text_model").value;
+      const imageModel = document.getElementById("image_model").value;
+      const thinkingModel = document.getElementById("thinking_model").value;
+      const stream = document.getElementById("streamToggle").checked;
+
+      // Clear previous output
+      document.getElementById("responseArea").textContent = "Processing...";
+      document.getElementById("codeArea").style.display = "none";
+      document.getElementById("codeOutput").textContent = "";
+      document.getElementById("imageResults").style.display = "none";
+      document.getElementById("imageContainer").innerHTML = "";
+
+      fetch("/process_request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          input: prompt,
+          stream: stream,
+          text_model: textModel,
+          image_model: imageModel,
+          thinking_model: thinkingModel,
+          isImageRequest: prompt.toLowerCase().startsWith("-img")
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        let output = data.output;
+        if (output.includes("```")) {
+          const parts = output.split("```");
+          let normalText = "", codeText = "";
+          parts.forEach((part, i) => {
+            if (i % 2 === 0) normalText += part;
+            else codeText += part + "\n";
+          });
+          document.getElementById("responseArea").textContent = normalText.trim();
+          document.getElementById("codeOutput").textContent = codeText.trim();
+          document.getElementById("codeArea").style.display = "block";
+        } else {
+          document.getElementById("responseArea").textContent = output;
+          document.getElementById("codeArea").style.display = "none";
+        }
+        if (data.images && data.images.length > 0) {
+          data.images.forEach(dataUri => {
+            const img = document.createElement("img");
+            img.src = dataUri;
+            document.getElementById("imageContainer").appendChild(img);
+          });
+          document.getElementById("imageResults").style.display = "block";
+        }
+      })
+      .catch(error => {
+        document.getElementById("responseArea").textContent = "Error: " + error.message;
+      });
+    }
+  </script>
+</body>
+</html>
