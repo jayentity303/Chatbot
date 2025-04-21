@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dark Claude-like Interface</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Add Prism.js for code highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+  <script src="../script.js"></script>
+
+</head>
+<body>
+  <div id="app-container">
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <div class="sidebar-inner">
+        <div class="sidebar-header">
+          <div class="logo">C</div>
+          <div class="app-name">Claude</div>
+        </div>
+        
+        <button class="new-chat-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          New Chat
+        </button>
+        
+        <div class="nav-group">
+          <div class="nav-group-title">Recent Chats</div>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="#" class="nav-link active">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 10H16M8 14H16M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Current conversation
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 10H16M8 14H16M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Python chatbot development
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 10H16M8 14H16M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Image Analysis
+              </a>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="sidebar-footer">
+          Claude Dark Theme • v1.0
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-header">
+      <h1>Chat with Claude</h1>
+      <div class="model-selector-container">
+        <div class="model-selector">
+          <label for="text_model">Text Model:</label>
+          <select id="text_model">
+            <!-- Will be populated dynamically -->
+          </select>
+        </div>
+        <div class="model-selector">
+          <label for="image_model">Image Model:</label>
+          <select id="image_model">
+            <!-- Will be populated dynamically -->
+          </select>
+        </div>
+      </div>
+    </div>
+      
+      <!-- Chat area -->
+      <div id="chat-container">
+        <div class="chat-wrapper" id="chat-messages">
+          <!-- Default welcome message -->
+          <div class="message-container">
+            <div class="message-header">
+              <div class="avatar assistant">C</div>
+              <div class="message-role">Claude</div>
+            </div>
+            <div class="message-content">
+              Hello! I'm Claude, an AI assistant by Anthropic. How can I help you today?
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Input area -->
+      <div class="chat-input-container">
+        <form id="chat-form" class="chat-form">
+          <div class="chat-input-wrapper">
+            <textarea 
+              id="userInput" 
+              class="chat-textarea" 
+              placeholder="Message Claude... (Type -img to generate images)" 
+              rows="1"
+              autocomplete="off"
+            ></textarea>
+            <button type="submit" class="send-button">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9L22 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <div class="chat-options">
+            <div class="stream-toggle">
+              <input type="checkbox" id="streamToggle" checked>
+              <label for="streamToggle">Stream response</label>
+            </div>
+            <div class="model-info">
+              Using <span id="current-model">claude-3-opus</span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <link rel="stylesheet" href="../styles.css">
+
+</body>
+</html>

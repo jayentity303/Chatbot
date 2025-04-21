@@ -1,0 +1,528 @@
+// Utility function for escaping HTML
+    function escapeHtml(unsafe) {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    // Handle file uploads for images
+    function handleFileUpload() {
+        const fileInput = document.getElementById('fileInput');
+        const files = fileInput.files;
+        
+        if (files.length === 0) return;
+        
+        const formData = new FormData();
+        for (let i = 0; i < files.length; i++) {
+            formData.append('files', files[i]);
+        }
+        
+        // Show upload indicator
+        addMessageToChat('user', 'Uploading file(s)...');
+        
+        fetch('/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Replace upload message with confirmation
+                const lastMessage = document.querySelector('.message.user:last-child');
+                if (lastMessage) {
+                    const messageText = lastMessage.querySelector('.message-text');
+                    messageText.innerHTML = `Uploaded ${files.length} file(s)`;
+                    
+                    // Add file previews if they are images
+                    const previewsDiv = document.createElement('div');
+                    previewsDiv.className = 'file-previews';
+                    
+                    Array.from(files).forEach(file => {
+                        if (file.type.startsWith('image/')) {
+                            const preview = document.createElement('img');
+                            preview.className = 'file-preview';
+                            preview.src = URL.createObjectURL(file);
+                            preview.alt = file.name;
+                            previewsDiv.appendChild(preview);
+                        }
+                    });
+                    
+                    if (previewsDiv.children.length > 0) {
+                        messageText.appendChild(previewsDiv);
+                    }
+                }
+                
+                // Automatically send a query about the uploaded files
+                const userInput = document.getElementById('userInput');
+                userInput.value = `I've uploaded some files. Can you analyze them?`;
+                document.getElementById('submitBtn').click();
+            } else {
+                addMessageToChat('bot', 'Error uploading files: ' + data.error);
+            }
+        })
+        .catch(error => {
+            addMessageToChat('bot', 'Error uploading files: ' + error.message);
+        });
+        
+        // Clear file input
+        fileInput.value = '';
+    }
+
+    // Function to export chat history
+    function exportChatHistory() {
+        const chatContainer = document.getElementById('chatContainer');
+        const messages = chatContainer.querySelectorAll('.message');
+        
+        let chatText = '';
+        let chatHtml = '<div class="neurogrid-chat-export">';
+        chatHtml += '<style>.neurogrid-chat-export{font-family:sans-serif;max-width:800px;margin:0 auto;padding:20px;}.user-message{text-align:right;margin:10px 0;}.bot-message{margin:10px 0;}.user-message span{background:#4a90e2;color:white;padding:8px 12px;border-radius:18px;display:inline-block;}.bot-message span{background:#f1f1f1;padding:8px 12px;border-radius:18px;display:inline-block;}.message-meta{font-size:12px;color:#888;margin-top:4px;}</style>';
+        
+        messages.forEach((message) => {
+            const isUser = message.classList.contains('user');
+            const role = isUser ? 'User' : 'NeuroGrid';
+            const timestamp = new Date().toLocaleString();
+            
+            const textElement = message.querySelector('.message-text');
+            const text = textElement ? textElement.innerText : '';
+            
+            // Add to plain text export
+            chatText += `${role} (${timestamp}):\n${text}\n\n`;
+            
+            // Add to HTML export
+            const className = isUser ? 'user-message' : 'bot-message';
+            chatHtml += `<div class="${className}">`;
+            chatHtml += `<span>${text}</span>`;
+            chatHtml += `<div class="message-meta">${role} • ${timestamp}</div>`;
+            chatHtml += '</div>';
+            
+            // Add images if any
+            const images = message.querySelectorAll('.image-item img');
+            if (images.length > 0) {
+                chatHtml += '<div class="image-gallery">';
+                images.forEach(img => {
+                    chatHtml += `<img src="${img.src}" alt="Generated image" style="max-width:200px;margin:5px;">`;
+                });
+                chatHtml += '</div>';
+                
+                chatText += `[${images.length} images]\n\n`;
+            }
+        });
+        
+        chatHtml += '</div>';
+        
+        // Create downloadable files
+        const textBlob = new Blob([chatText], { type: 'text/plain' });
+        const htmlBlob = new Blob([chatHtml], { type: 'text/html' });
+        
+        const textUrl = URL.createObjectURL(textBlob);
+        const htmlUrl = URL.createObjectURL(htmlBlob);
+        
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        
+        // Create download links
+        const textLink = document.createElement('a');
+        textLink.href = textUrl;
+        textLink.download = `neurogrid-chat-${timestamp}.txt`;
+        
+        const htmlLink = document.createElement('a');
+        htmlLink.href = htmlUrl;
+        htmlLink.download = `neurogrid-chat-${timestamp}.html`;
+        
+        // Trigger downloads
+        textLink.click();
+        setTimeout(() => htmlLink.click(), 100);
+        
+        // Clean up URLs
+        setTimeout(() => {
+            URL.revokeObjectURL(textUrl);
+            URL.revokeObjectURL(htmlUrl);
+        }, 1000);
+    }
+
+    // Handle search functionality
+    function searchChatHistory() {
+        const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+        if (!searchTerm) {
+            clearSearch();
+            return;
+        }
+        
+        const chatContainer = document.getElementById('chatContainer');
+        const messages = chatContainer.querySelectorAll('.message');
+        
+        let foundCount = 0;
+        
+        messages.forEach(message => {
+            const messageText = message.querySelector('.message-text');
+            if (!messageText) return;
+            
+            const text = messageText.innerText.toLowerCase();
+            const containsTerm = text.includes(searchTerm);
+            
+            if (containsTerm) {
+                message.classList.add('search-highlight');
+                foundCount++;
+                
+                // Highlight the search term
+                const regex = new RegExp(`(${escapeRegExp(searchTerm)})`, 'gi');
+                messageText.innerHTML = messageText.innerHTML.replace(regex, '<mark>$1</mark>');
+            } else {
+                message.classList.add('search-dimmed');
+            }
+        });
+        
+        // Show search results info
+        const searchInfo = document.getElementById('searchInfo') || document.createElement('div');
+        searchInfo.id = 'searchInfo';
+        searchInfo.className = 'search-info';
+        searchInfo.textContent = `Found ${foundCount} matching message${foundCount !== 1 ? 's' : ''}`;
+        
+        if (!document.getElementById('searchInfo')) {
+            const header = document.querySelector('.header');
+            header.appendChild(searchInfo);
+        }
+        
+        // Scroll to first result if found
+        const firstResult = document.querySelector('.search-highlight');
+        if (firstResult) {
+            firstResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    function clearSearch() {
+        const messages = document.querySelectorAll('.message');
+        messages.forEach(message => {
+            message.classList.remove('search-highlight', 'search-dimmed');
+            
+            // Remove highlight marks
+            const messageText = message.querySelector('.message-text');
+            if (messageText) {
+                messageText.innerHTML = messageText.innerHTML.replace(/<mark>(.*?)<\/mark>/g, '$1');
+            }
+        });
+        
+        // Remove search info
+        const searchInfo = document.getElementById('searchInfo');
+        if (searchInfo) {
+            searchInfo.remove();
+        }
+    }
+
+    function escapeRegExp(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    // Save conversation to history
+    function saveConversation() {
+        const chatContainer = document.getElementById('chatContainer');
+        const messages = chatContainer.querySelectorAll('.message');
+        
+        if (messages.length <= 1) return; // Don't save empty conversations
+        
+        const title = generateConversationTitle();
+        const timestamp = Date.now();
+        const conversationId = 'conv-' + timestamp;
+        
+        // Extract messages
+        const messageData = [];
+        messages.forEach(message => {
+            const isUser = message.classList.contains('user');
+            const role = isUser ? 'user' : 'bot';
+            
+            const textElement = message.querySelector('.message-text');
+            const text = textElement ? textElement.innerHTML : '';
+            
+            const imagesContainer = message.querySelector('.image-results');
+            const images = [];
+            
+            if (imagesContainer) {
+                const imageElements = imagesContainer.querySelectorAll('img');
+                imageElements.forEach(img => {
+                    images.push(img.src);
+                });
+            }
+            
+            messageData.push({
+                role,
+                content: text,
+                images,
+                timestamp: new Date().toISOString()
+            });
+        });
+        
+        // Create conversation object
+        const conversation = {
+            id: conversationId,
+            title: title,
+            timestamp: timestamp,
+            messages: messageData
+        };
+        
+        // Save to local storage
+        let conversations = JSON.parse(localStorage.getItem('neurogrid_conversations') || '[]');
+        conversations.push(conversation);
+        
+        // Limit to 50 conversations to avoid local storage issues
+        if (conversations.length > 50) {
+            conversations = conversations.slice(-50);
+        }
+        
+        localStorage.setItem('neurogrid_conversations', JSON.stringify(conversations));
+        
+        // Update conversation history in UI
+        updateConversationsList();
+        
+        return conversationId;
+    }
+
+    function generateConversationTitle() {
+        // Get the first user message as the base for title
+        const firstUserMessage = document.querySelector('.message.user .message-text');
+        if (!firstUserMessage) return 'New Conversation';
+        
+        const text = firstUserMessage.innerText;
+        // Create a short title from the first message
+        const title = text.split(' ').slice(0, 5).join(' ');
+        
+        return title.length > 30 ? title.substring(0, 30) + '...' : title;
+    }
+
+    function updateConversationsList() {
+        const conversationsList = document.getElementById('conversationsList');
+        if (!conversationsList) return;
+        
+        // Clear current list
+        conversationsList.innerHTML = '';
+        
+        // Get saved conversations
+        const conversations = JSON.parse(localStorage.getItem('neurogrid_conversations') || '[]');
+        
+        if (conversations.length === 0) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'empty-state';
+            emptyState.textContent = 'No saved conversations';
+            conversationsList.appendChild(emptyState);
+            return;
+        }
+        
+        // Sort by timestamp descending (newest first)
+        conversations.sort((a, b) => b.timestamp - a.timestamp);
+        
+        // Add each conversation to the list
+        conversations.forEach(conversation => {
+            const item = document.createElement('div');
+            item.className = 'conversation-item';
+            item.dataset.id = conversation.id;
+            
+            const title = document.createElement('div');
+            title.className = 'conversation-title';
+            title.textContent = conversation.title;
+            
+            const date = document.createElement('div');
+            date.className = 'conversation-date';
+            date.textContent = new Date(conversation.timestamp).toLocaleString();
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-conversation';
+            deleteBtn.innerHTML = '&times;';
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteConversation(conversation.id);
+            });
+            
+            item.appendChild(title);
+            item.appendChild(date);
+            item.appendChild(deleteBtn);
+            
+            item.addEventListener('click', () => {
+                loadConversation(conversation.id);
+                // Close sidebar on mobile
+                document.getElementById('sidebar').classList.remove('active');
+            });
+            
+            conversationsList.appendChild(item);
+        });
+    }
+
+    function loadConversation(conversationId) {
+        const conversations = JSON.parse(localStorage.getItem('neurogrid_conversations') || '[]');
+        const conversation = conversations.find(conv => conv.id === conversationId);
+        
+        if (!conversation) return;
+        
+        // Clear current chat
+        const chatContainer = document.getElementById('chatContainer');
+        chatContainer.innerHTML = '';
+        
+        // Rebuild messages
+        conversation.messages.forEach(msg => {
+            let messageElement;
+            
+            if (msg.role === 'user') {
+                messageElement = addMessageToChat('user', msg.content);
+            } else {
+                messageElement = addMessageToChat('bot', msg.content);
+                
+                // Add images if any
+                if (msg.images && msg.images.length > 0) {
+                    const messageContent = messageElement.querySelector('.message-content');
+                    
+                    const imageResults = document.createElement('div');
+                    imageResults.className = 'image-results';
+                    
+                    msg.images.forEach(imageUrl => {
+                        const imageItem = document.createElement('div');
+                        imageItem.className = 'image-item';
+                        
+                        const img = document.createElement('img');
+                        img.src = imageUrl;
+                        img.alt = 'Generated image';
+                        
+                        imageItem.appendChild(img);
+                        imageResults.appendChild(imageItem);
+                    });
+                    
+                    messageContent.appendChild(imageResults);
+                }
+                
+                // Re-enhance code blocks
+                enhanceCodeBlocks(messageElement);
+            }
+        });
+        
+        // Scroll to bottom
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function deleteConversation(conversationId) {
+        if (!confirm('Delete this conversation?')) return;
+        
+        let conversations = JSON.parse(localStorage.getItem('neurogrid_conversations') || '[]');
+        conversations = conversations.filter(conv => conv.id !== conversationId);
+        localStorage.setItem('neurogrid_conversations', JSON.stringify(conversations));
+        
+        updateConversationsList();
+    }
+
+    // Initialize application
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize components already defined in the original code
+        fetchAvailableModels();
+        autoResizeTextarea();
+        initEventListeners();
+        updateConversationsList();
+        
+        // Check for dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-theme');
+            document.getElementById('darkModeToggle').checked = true;
+        }
+    });
+
+    function autoResizeTextarea() {
+        const textarea = document.getElementById('userInput');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+    }
+
+    function initEventListeners() {
+        // Main form submission
+        const textarea = document.getElementById('userInput');
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('submitBtn').click();
+            }
+        });
+        
+        document.getElementById('submitBtn').addEventListener('click', sendMessage);
+        document.getElementById('newChatBtn').addEventListener('click', newChat);
+        
+        // Mobile menu toggle
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+        
+        // Dark mode toggle
+        document.getElementById('darkModeToggle').addEventListener('change', function() {
+            document.body.classList.toggle('dark-theme');
+            localStorage.setItem('darkMode', this.checked);
+        });
+        
+        // File upload
+        document.getElementById('uploadBtn').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+        
+        document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+        
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', debounce(searchChatHistory, 300));
+        document.getElementById('searchInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                this.value = '';
+                clearSearch();
+            }
+        });
+        
+        // Export chat
+        document.getElementById('exportBtn').addEventListener('click', exportChatHistory);
+        
+        // Save conversation
+        document.getElementById('saveBtn').addEventListener('click', function() {
+            const id = saveConversation();
+            if (id) {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = 'Conversation saved';
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.classList.add('show');
+                    
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                        setTimeout(() => notification.remove(), 300);
+                    }, 2000);
+                }, 10);
+            }
+        });
+    }
+
+    function newChat() {
+        const chatContainer = document.getElementById('chatContainer');
+        chatContainer.innerHTML = `
+            <div class="message bot">
+                <div class="avatar bot-avatar">N</div>
+                <div class="message-content">
+                    <div class="message-bubble">
+                        <div class="message-text">Hello! I'm NeuroGrid. How can I assist you today?</div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Clear input
+        document.getElementById('userInput').value = '';
+        document.getElementById('userInput').style.height = 'auto';
+        
+        // Clear search if active
+        document.getElementById('searchInput').value = '';
+        clearSearch();
+    }
+
+    // Utility function for debouncing
+    function debounce(func, wait) {
+        let timeout;
+        return function() {
+            const context = this;
+            const args = arguments;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(context, args), wait);
+        };
+    }

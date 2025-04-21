@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot Interface</title>
+    <style>
+        :root {
+            --primary-color: #7e57c2;
+            --secondary-color: #b39ddb;
+            --bg-color: #f5f7f9;
+            --chat-bg: #ffffff;
+            --user-bubble: #e3f2fd;
+            --ai-bubble: #f3e5f5;
+            --text-color: #333;
+            --light-text: #666;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+        }
+
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: white;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .config-section {
+            margin-bottom: 20px;
+        }
+
+        .config-section h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: var(--light-text);
+        }
+
+        .input-group input, 
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .input-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .conversation-list {
+            margin-top: 20px;
+        }
+
+        .conversation-item {
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .conversation-item:hover {
+            background-color: #e0e0e0;
+        }
+
+        .new-chat-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: auto;
+            margin-bottom: 10px;
+        }
+
+        .new-chat-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background-color: var(--chat-bg);
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            background-color: white;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .chat-header h2 {
+            color: var(--primary-color);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            max-width: 80%;
+        }
+
+        .message-user {
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        .message-ai {
+            align-self: flex-start;
+        }
+
+        .message-content {
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .message-user .message-content {
+            background-color: var(--user-bubble);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-ai .message-content {
+            background-color: var(--ai-bubble);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-timestamp {
+            font-size: 12px;
+            margin-top: 5px;
+            color: var(--light-text);
+        }
+
+        .message-image {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .chat-input-container {
+            padding: 15px 20px;
+            background-color: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 15px;
+            resize: none;
+            overflow-y: auto;
+            max-height: 150px;
+            line-height: 1.5;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .send-btn {
+            margin-left: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .send-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .loading-indicator {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .loading-indicator span {
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            margin: 0 5px;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .loading-indicator span:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .loading-indicator span:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        .markdown-content {
+            line-height: 1.6;
+        }
+
+        .markdown-content pre {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        .markdown-content code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+        }
+
+        .tab-container {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 15px;
+        }
+
+        .tab {
+            padding: 8px 15px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .config-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .config-btn {
+            flex: 1;
+            padding: 8px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .config-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 50%;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <h2>AI Chatbot</h2>
+            
+            <div class="config-section">
+                <h3>API Configuration</h3>
+                <div class="tab-container">
+                    <div class="tab active" data-tab="text">Text</div>
+                    <div class="tab" data-tab="image">Image</div>
+                </div>
+                
+                <div class="tab-content active" id="text-tab">
+                    <div class="input-group">
+                        <label for="api-key">API Key</label>
+                        <input type="password" id="api-key" placeholder="Enter your API key">
+                    </div>
+                    <div class="input-group">
+                        <label for="api-url">Base URL</label>
+                        <input type="text" id="api-url" placeholder="Base URL (e.g., https://api.openai.com/v1)">
+                    </div>
+                    <div class="input-group">
+                        <label for="model-select">Model</label>
+                        <select id="model-select">
+                            <option value="Provider-5/gpt-4o-mini">gpt-4o-mini</option>
+                            <option value="gpt-4">gpt-4</option>
+                            <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                            <option value="claude-3-opus-20240229">claude-3-opus</option>
+                            <option value="claude-3-sonnet-20240229">claude-3-sonnet</option>
+                            <option value="claude-3-haiku-20240307">claude-3-haiku</option>
+                        </select>
+                    </div>
+                    <div class="config-buttons">
+                        <button class="config-btn" id="save-text-config">Save Configuration</button>
+                        <button class="config-btn" id="test-text-config">Test Connection</button>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="image-tab">
+                    <div class="input-group">
+                        <label for="image-api-key">API Key</label>
+                        <input type="password" id="image-api-key" placeholder="Enter your API key">
+                    </div>
+                    <div class="input-group">
+                        <label for="image-api-url">Base URL</label>
+                        <input type="text" id="image-api-url" placeholder="Base URL (e.g., https://api.openai.com/v1)">
+                    </div>
+                    <div class="input-group">
+                        <label for="image-model-select">Model</label>
+                        <select id="image-model-select">
+                            <option value="Provider-5/flux-schnell">flux-schnell</option>
+                            <option value="dall-e-3">dall-e-3</option>
+                            <option value="dall-e-2">dall-e-2</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="image-size">Image Size</label>
+                        <select id="image-size">
+                            <option value="1024x1024">1024x1024</option>
+                            <option value="512x512">512x512</option>
+                            <option value="256x256">256x256</option>
+                        </select>
+                    </div>
+                    <div class="config-buttons">
+                        <button class="config-btn" id="save-image-config">Save Configuration</button>
+                        <button class="config-btn" id="test-image-config">Test Connection</button>
+                    </div>
+                </div>
+                <div class="error-message" id="config-error"></div>
+            </div>
+
+            <button class="new-chat-btn" id="new-chat-btn">New Chat</button>
+
+            <div class="conversation-list" id="conversation-list">
+                <!-- Conversations will be listed here -->
+            </div>
+        </aside>
+
+        <main class="chat-container">
+            <header class="chat-header">
+                <h2>New Conversation</h2>
+            </header>
+
+            <div class="chat-messages" id="chat-messages">
+                <!-- Messages will appear here -->
+                <div class="message message-ai">
+                    <div class="message-content">
+                        Hello! I'm your AI assistant. How can I help you today?
+                    </div>
+                    <div class="message-timestamp">Today, just now</div>
+                </div>
+            </div>
+
+            <div class="loading-indicator" id="loading-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <div class="chat-input-container">
+                <textarea class="chat-input" id="chat-input" placeholder="Type your message..." rows="1"></textarea>
+                <button class="send-btn" id="send-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cache DOM elements
+            const chatMessages = document.getElementById('chat-messages');
+            const chatInput = document.getElementById('chat-input');
+            const sendBtn = document.getElementById('send-btn');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const newChatBtn = document.getElementById('new-chat-btn');
+            const conversationList = document.getElementById('conversation-list');
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const configError = document.getElementById('config-error');
+            
+            // Config buttons
+            const saveTextConfigBtn = document.getElementById('save-text-config');
+            const testTextConfigBtn = document.getElementById('test-text-config');
+            const saveImageConfigBtn = document.getElementById('save-image-config');
+            const testImageConfigBtn = document.getElementById('test-image-config');
+            
+            // Store API configurations
+            let textConfig = {
+                apiKey: '',
+                baseUrl: '',
+                model: 'Provider-5/gpt-4o-mini'
+            };
+            
+            let imageConfig = {
+                apiKey: '',
+                baseUrl: '',
+                model: 'Provider-5/flux-schnell',
+                size: '1024x1024'
+            };
+            
+            // Store conversations
+            let conversations = [];
+            let currentConversationId = Date.now();
+            let conversationHistory = [];
+            
+            // Initialize configs from localStorage if available
+            loadConfigurations();
+            
+            // Handle tabs
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+            
+            // Config button event listeners
+            saveTextConfigBtn.addEventListener('click', saveTextConfig);
+            testTextConfigBtn.addEventListener('click', testTextConfig);
+            saveImageConfigBtn.addEventListener('click', saveImageConfig);
+            testImageConfigBtn.addEventListener('click', testImageConfig);
+            
+            // Auto-resize text area
+            chatInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+                if (this.scrollHeight > 150) {
+                    this.style.overflowY = 'auto';
+                } else {
+                    this.style.overflowY = 'hidden';
+                }
+            });
+
+            // Send message when Enter key is pressed (without Shift)
+            chatInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Send message when button is clicked
+            sendBtn.addEventListener('click', sendMessage);
+            
+            // Create a new chat
+            newChatBtn.addEventListener('click', startNewChat);
+            
+            function saveTextConfig() {
+                textConfig = {
+                    apiKey: document.getElementById('api-key').value.trim(),
+                    baseUrl: document.getElementById('api-url').value.trim(),
+                    model: document.getElementById('model-select').value
+                };
+                
+                localStorage.setItem('chatbot-text-config', JSON.stringify({
+                    baseUrl: textConfig.baseUrl,
+                    model: textConfig.model
+                }));
+                
+                showConfigMessage('Text configuration saved!', false);
+            }
+            
+            function testTextConfig() {
+                const apiKey = document.getElementById('api-key').value.trim();
+                const baseUrl = document.getElementById('api-url').value.trim();
+                const model = document.getElementById('model-select').value;
+                
+                if (!apiKey || !baseUrl) {
+                    showConfigMessage('API key and Base URL are required', true);
+                    return;
+                }
+                
+                showConfigMessage('Testing connection...', false);
+                
+                // Make a simple request to test the connection
+                axios({
+                    method: 'post',
+                    url: `${baseUrl}/chat/completions`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    data: {
+                        model: model,
+                        messages: [
+                            { role: 'user', content: 'Hello, this is a test.' }
+                        ],
+                        max_tokens: 10
+                    }
+                })
+                .then(response => {
+                    showConfigMessage('Connection successful!', false);
+                })
+                .catch(error => {
+                    console.error('Error testing connection:', error);
+                    showConfigMessage(`Connection error: ${error.response?.data?.error?.message || error.message}`, true);
+                });
+            }
+            
+            function saveImageConfig() {
+                imageConfig = {
+                    apiKey: document.getElementById('image-api-key').value.trim(),
+                    baseUrl: document.getElementById('image-api-url').value.trim(),
+                    model: document.getElementById('image-model-select').value,
+                    size: document.getElementById('image-size').value
+                };
+                
+                localStorage.setItem('chatbot-image-config', JSON.stringify({
+                    baseUrl: imageConfig.baseUrl,
+                    model: imageConfig.model,
+                    size: imageConfig.size
+                }));
+                
+                showConfigMessage('Image configuration saved!', false);
+            }
+            
+            function testImageConfig() {
+                const apiKey = document.getElementById('image-api-key').value.trim();
+                const baseUrl = document.getElementById('image-api-url').value.trim();
+                const model = document.getElementById('image-model-select').value;
+                
+                if (!apiKey || !baseUrl) {
+                    showConfigMessage('API key and Base URL are required', true);
+                    return;
+                }
+                
+                showConfigMessage('Testing connection...', false);
+                
+                // Make a simple request to test the connection
+                axios({
+                    method: 'post',
+                    url: `${baseUrl}/images/generations`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    data: {
+                        model: model,
+                        prompt: 'A simple test image of a blue circle',
+                        n: 1,
+                        size: imageConfig.size,
+                        response_format: 'url'
+                    }
+                })
+                .then(response => {
+                    showConfigMessage('Connection successful!', false);
+                })
+                .catch(error => {
+                    console.error('Error testing connection:', error);
+                    showConfigMessage(`Connection error: ${error.response?.data?.error?.message || error.message}`, true);
+                });
+            }
+            
+            function loadConfigurations() {
+                // Load text config
+                const savedTextConfig = localStorage.getItem('chatbot-text-config');
+                if (savedTextConfig) {
+                    try {
+                        const config = JSON.parse(savedTextConfig);
+                        document.getElementById('api-url').value = config.baseUrl || '';
+                        document.getElementById('model-select').value = config.model || 'Provider-5/gpt-4o-mini';
+                        
+                        textConfig.baseUrl = config.baseUrl;
+                        textConfig.model = config.model;
+                    } catch (e) {
+                        console.error('Failed to load text config:', e);
+                    }
+                }
+                
+                // Load image config
+                const savedImageConfig = localStorage.getItem('chatbot-image-config');
+                if (savedImageConfig) {
+                    try {
+                        const config = JSON.parse(savedImageConfig);
+                        document.getElementById('image-api-url').value = config.baseUrl || '';
+                        document.getElementById('image-model-select').value = config.model || 'Provider-5/flux-schnell';
+                        document.getElementById('image-size').value = config.size || '1024x1024';
+                        
+                        imageConfig.baseUrl = config.baseUrl;
+                        imageConfig.model = config.model;
+                        imageConfig.size = config.size;
+                    } catch (e) {
+                        console.error('Failed to load image config:', e);
+                    }
+                }
+            }
+
+            function startNewChat() {
+                // Save current conversation if it has messages
+                if (conversationHistory.length > 0) {
+                    saveCurrentConversation();
+                }
+                
+                // Clear chat
+                chatMessages.innerHTML = `
+                    <div class="message message-ai">
+                        <div class="message-content">
+                            Hello! I'm your AI assistant. How can I help you today?
+                        </div>
+                        <div class="message-timestamp">Today, just now</div>
+                    </div>
+                `;
+                
+                // Create new conversation
+                currentConversationId = Date.now();
+                conversationHistory = [];
+                
+                // Update header
+                document.querySelector('.chat-header h2').textContent = 'New Conversation';
+            }
+            
+            function saveCurrentConversation() {
+                if (conversationHistory.length === 0) return;
+                
+                const firstMessage = conversationHistory.find(msg => msg.role === 'user');
+                const title = firstMessage ? 
+                    (firstMessage.content.length > 30 ? 
+                        firstMessage.content.substring(0, 30) + '...' : 
+                        firstMessage.content) : 
+                    'Conversation';
+                
+                const convo = {
+                    id: currentConversationId,
+                    title: title,
+                    messages: [...conversationHistory]
+                };
+                
+                // Check if conversation already exists
+                const existingIndex = conversations.findIndex(c => c.id === currentConversationId);
+                if (existingIndex !== -1) {
+                    conversations[existingIndex] = convo;
+                } else {
+                    conversations.push(convo);
+                    addConversationToList(convo);
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('chatbot-conversations', JSON.stringify(conversations));
+            }
+            
+            function addConversationToList(conversation) {
+                const convoItem = document.createElement('div');
+                convoItem.className = 'conversation-item';
+                convoItem.textContent = conversation.title;
+                convoItem.dataset.id = conversation.id;
+                
+                convoItem.addEventListener('click', () => loadConversation(conversation.id));
+                
+                conversationList.prepend(convoItem);
+            }
+            
+            function loadConversation(id) {
+                const conversation = conversations.find(c => c.id == id);
+                if (!conversation) return;
+                
+                // Update current conversation
+                currentConversationId = conversation.id;
+                conversationHistory = [...conversation.messages];
+                
+                // Update header
+                document.querySelector('.chat-header h2').textContent = conversation.title;
+                
+                // Clear and repopulate chat
+                chatMessages.innerHTML = '';
+                
+                conversation.messages.forEach(msg => {
+                    if (msg.role === 'user') {
+                        addUserMessage(msg.content);
+                    } else if (msg.role === 'assistant') {
+                        if (msg.type === 'text') {
+                            addAssistantMessage(msg.content);
+                        } else if (msg.type === 'image') {
+                            addAssistantImageMessage(msg.content);
+                        }
+                    }
+                });
+                
+                // Scroll to bottom
+                scrollToBottom();
+            }
+
+            function sendMessage() {
+                const message = chatInput.value.trim();
+                if (!message) return;
+                
+                // Display user message
+                addUserMessage(message);
+                
+                // Add to conversation history
+                conversationHistory.push({
+                    role: 'user',
+                    content: message
+                });
+                
+                // Clear input
+                chatInput.value = '';
+                chatInput.style.height = 'auto';
+                
+                // Show loading indicator
+                loadingIndicator.style.display = 'flex';
+                
+                // Determine if this is an image or text request
+                const activeTab = document.querySelector('.tab.active').getAttribute('data-tab');
+                
+                if (activeTab === 'image') {
+                    // Handle image generation
+                    processImageRequest(message);
+                } else {
+                    // Handle text completion
+                    processTextRequest(message);
+                }
+            }
+            
+            function processTextRequest(message) {
+                // Get API details
+                const apiKey = document.getElementById('api-key').value.trim();
+                const baseUrl = document.getElementById('api-url').value.trim();
+                const model = document.getElementById('model-select').value;
+                
+                if (!apiKey || !baseUrl) {
+                    showConfigError('Please fill in API key and Base URL fields for text responses.');
+                    loadingIndicator.style.display = 'none';
+                    return;
+                }
+                
+                // Format messages for API request - include conversation history
+                const messages = conversationHistory.map(msg => {
+                    if (msg.role === 'assistant' && msg.type === 'text') {
+                        return { role: 'assistant', content: msg.content };
+                    } else if (msg.role === 'user') {
+                        return { role: 'user', content: msg.content };
+                    }
+                    return null;
+                }).filter(Boolean);
+                
+                // Make API request
+                axios({
+                    method: 'post',
+                    url: `${baseUrl}/chat/completions`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    data: {
+                        model: model,
+                        messages: messages,
+                        max_tokens: 2000
+                    }
+                })
+                .then(response => {
+                    // Get response content
+                    const aiResponse = response.data.choices[0].message.content;
+                    
+                    // Add assistant message
+                    addAssistantMessage(aiResponse);
+                    
+                    // Add to conversation history
+                    conversationHistory.push({
+                        role: 'assistant',
+                        content: aiResponse,
+                        type: 'text'
+                    });
+                    
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                    
+                    // Save conversation
+                    saveCurrentConversation();
+                })
+                .catch(error => {
+                    console.error('Error making API request:', error);
+                    
+                    // Show error message
+                    const errorMessage = error.response?.data?.error?.message || error.message;
+                    addAssistantMessage(`Error: ${errorMessage}`);
+                    
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                });
+            }
+            
+            function processImageRequest(prompt) {
+                // Get API details
+                const apiKey = document.getElementById('image-api-key').value.trim();
+                const baseUrl = document.getElementById('image-api-url').value.trim();
+                const model = document.getElementById('image-model-select').value;
+                const size = document.getElementById('image-size').value;
+                
+                if (!apiKey || !baseUrl) {
+                    showConfigError('Please fill in API key and Base URL fields for image responses.');
+                    loadingIndicator.style.display = 'none';
+                    return;
+                }
+                
+                // Make API request
+                axios({
+                    method: 'post',
+                    url: `${baseUrl}/images/generations`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    data: {
+                        model: model,
+                        prompt: prompt,
+                        n: 1,
+                        size: size,
+                        response_format: 'b64_json'
+                    }
+                })
+                .then(response => {
+                    // Check if b64_json is available
+                    if (response.data.data[0].b64_json) {
+                        const imageData = response.data.data[0].b64_json;
+                        const imageUrl = `data:image

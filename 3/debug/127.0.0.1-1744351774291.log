@@ -1,0 +1,28 @@
+popup.js:12 items {USER_OPTIONS: {…}}
+127.0.0.1/:1  Error handling response: TypeError: Cannot set properties of null (setting 'valueAsNumber')
+    at chrome-extension://kpmbpdpbjjadabknommjfphilmecebab/js/popup.js:20:57
+vcd15cbe7772f49c399c6a5babf22c1241717689176015:1 
+            
+            
+            POST http://127.0.0.1:5000/cdn-cgi/rum? 404 (NOT FOUND)
+(anonymous) @ vcd15cbe7772f49c399c6a5babf22c1241717689176015:1
+P @ vcd15cbe7772f49c399c6a5babf22c1241717689176015:1
+R @ vcd15cbe7772f49c399c6a5babf22c1241717689176015:1
+setTimeout
+(anonymous) @ vcd15cbe7772f49c399c6a5babf22c1241717689176015:1
+script.js:159  Error parsing stream chunk: [Streaming Started] SyntaxError: Unexpected token 'S', "[Streaming Started]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at HTMLButtonElement.sendMessage (script.js:156:48)
+sendMessage @ script.js:159
+script.js:159  Error parsing stream chunk: data: {"id": "chatcmpl-4b532f30-9792-4e43-9076-5020e1b1ab72", "object": "chat.completion.chunk", "created": 1744351744, "model": "anthropic/claude-3-haiku", "choices": [{"index": 0, "delta": {"role": "assistant"}, "finish_reason": null}]} SyntaxError: Unexpected token 'd', "data: {"id"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at HTMLButtonElement.sendMessage (script.js:156:48)
+sendMessage @ script.js:159
+script.js:159  Error parsing stream chunk: data: {"id": "chatcmpl-4b532f30-9792-4e43-9076-5020e1b1ab72", "object": "chat.completion.chunk", "created": 1744351744, "model": "anthropic/claude-3-haiku", "choices": [{"index": 0, "delta": {}, "finish_reason": "stop"}]} SyntaxError: Unexpected token 'd', "data: {"id"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at HTMLButtonElement.sendMessage (script.js:156:48)
+sendMessage @ script.js:159
+script.js:159  Error parsing stream chunk: data: [DONE] SyntaxError: Unexpected token 'd', "data: [DONE]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at HTMLButtonElement.sendMessage (script.js:156:48)
+sendMessage @ script.js:159

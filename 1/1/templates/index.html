@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroGrid Interface</title>
+
+    <link rel="stylesheet" href="../styles.css">
+    <script src="../script.js"></script>
+
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-img">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 32C24.8366 32 32 24.8366 32 16C32 7.16344 24.8366 0 16 0C7.16344 0 0 7.16344 0 16C0 24.8366 7.16344 32 16 32Z" fill="#5436DA"/>
+                        <path d="M12.8 10.6667L19.2 16L12.8 21.3333V10.6667Z" fill="white"/>
+                    </svg>
+                </div>
+                <div class="logo-text">NeuroGrid</div>
+            </div>
+            
+            <button class="new-chat-btn" id="newChatBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                New Chat
+            </button>
+            
+            <div class="settings-section">
+                <div class="settings-title">Models</div>
+                <div class="model-selector">
+                    <label for="text_model">Text Model</label>
+                    <select id="text_model">
+                        <option value="">Loading models...</option>
+                    </select>
+                </div>
+                
+                <div class="model-selector">
+                    <label for="image_model">Image Model</label>
+                    <select id="image_model">
+                        <option value="">Loading models...</option>
+                    </select>
+                </div>
+                
+                <div class="model-selector">
+                    <label for="thinking_model">Thinking Model</label>
+                    <select id="thinking_model">
+                        <option value="">Loading models...</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main">
+            <div class="chat-container" id="chatContainer">
+                <div class="message bot">
+                    <div class="avatar bot-avatar">N</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            <div class="message-text">Hello! I'm NeuroGrid. How can I assist you today?</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Input Box -->
+            <div class="input-container">
+                <div class="options-bar">
+                    <div class="stream-toggle">
+                        <input type="checkbox" id="streamToggle">
+                        <label for="streamToggle">Stream Response</label>
+                    </div>
+                    <div id="statusIndicator"></div>
+                </div>
+                <div class="input-box">
+                    <textarea id="userInput" placeholder="Send a message or type '-img' for image generation..." rows="1"></textarea>
+                    <button class="submit-btn" id="submitBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9L22 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile menu toggle -->
+    <div class="menu-toggle" id="menuToggle">
+        <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1H19M1 8H19M1 15H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+    </div>
+
+
+</body>
+</html>

@@ -1,0 +1,231 @@
+{
+  "data": [
+    {
+      "created": 1700000000,
+      "id": "Provider-1/DeepSeek-R1",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 2,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-2/gpt-4o",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 5,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-3/DeepSeek-R1",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 2,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-3/o3-mini",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 4.4,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-3/flux-1.1-ultra",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 8,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-4/DeepSeek-R1",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": null,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-4/DeepSeek-R1-Distill-Llama-70B",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": null,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-4/DeepSeekV3",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": null,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-5/gpt-4o-mini",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 0.6,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-5/gpt-4o",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 10,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-5/o1-mini",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 4.4,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-5/qwen-2.5-coder-32b",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 0.8,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-5/llama-3.3-70b",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 0.4,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-5/deepseek-v3",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 1.3,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-5/claude-3.7-sonnet",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 15,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-5/deepseek-r1-distill-qwen-32b",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 0.6,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-5/deepseek-r1",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 3,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-5/deepseek-r1-llama-70b",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 0.75,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-5/gemini-2.0-flash",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 0.6,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-5/gemini-2.0-flash-thinking",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 0.6,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-5/flux-pro",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 8,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-5/flux-schnell",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 6,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-6/flux-schnell",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 6,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-6/flux-dev",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 7,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    },
+    {
+      "created": 1700000000,
+      "id": "Provider-6/sana-6b",
+      "object": "model",
+      "owned_by": "DevsDoCode",
+      "owner_cost_per_million_tokens": 8,
+      "permission": [],
+      "user_cost_per_million_tokens": 0
+    }
+  ],
+  "object": "list",
+  "status_code": 200
+}

@@ -1,0 +1,19 @@
+popup.js:12 items Object
+127.0.0.1/:1  Error handling response: TypeError: Cannot set properties of null (setting 'valueAsNumber')
+    at chrome-extension://kpmbpdpbjjadabknommjfphilmecebab/js/popup.js:20:57
+:5000/cdn-cgi/rum?:1 
+            
+            
+            Failed to load resource: the server responded with a status of 404 (NOT FOUND)
+script.js:94  Invalid JSON chunk: data: {"id": "chatcmpl-a3a4e85a-e01b-4bac-8622-e2d871e4d40e", "object": "chat.completion.chunk", "created": 1744352108, "model": "moonshotai/kimi-vl-a3b-thinking:free", "choices": [{"index": 0, "delta": {"role": "assistant"}, "finish_reason": null}]}
+sendMessage @ script.js:94
+script.js:94  Invalid JSON chunk: data: {"id": "chatcmpl-a3a4e85a-e01b-4bac-8622-e2d871e4d40e", "object": "chat.completion.chunk", "created": 1744352108, "model": "moonshotai/kimi-vl-a3b-thinking:free", "choices": [{"index": 0, "delta": {}, "finish_reason": "stop"}]}
+sendMessage @ script.js:94
+script.js:94  Invalid JSON chunk: data: [DONE]
+sendMessage @ script.js:94
+script.js:94  Invalid JSON chunk: data: {"id": "chatcmpl-2a24ac4d-d2cc-4a69-8bd1-ca9f631ad9b5", "object": "chat.completion.chunk", "created": 1744352140, "model": "moonshotai/kimi-vl-a3b-thinking:free", "choices": [{"index": 0, "delta": {"role": "assistant"}, "finish_reason": null}]}
+sendMessage @ script.js:94
+script.js:94  Invalid JSON chunk: data: {"id": "chatcmpl-2a24ac4d-d2cc-4a69-8bd1-ca9f631ad9b5", "object": "chat.completion.chunk", "created": 1744352140, "model": "moonshotai/kimi-vl-a3b-thinking:free", "choices": [{"index": 0, "delta": {}, "finish_reason": "stop"}]}
+sendMessage @ script.js:94
+script.js:94  Invalid JSON chunk: data: [DONE]
+sendMessage @ script.js:94
